@@ -40,7 +40,9 @@ export default function BillPage() {
         <main className="min-h-screen bg-background py-6 px-4 md:px-8">
             <div className="max-w-4xl mx-auto">
 
-                <button className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors">
+                <button className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
+                 onClick={() => navigate(-1)}
+                >
                     <ArrowLeft className="w-5 h-5" />
                     <span>Back</span>
                 </button>

@@ -4,11 +4,11 @@ import posRout from './routes/pos.route'
 
 const app = express();
 
-const URL = process.env.FRONTEND_URL
+const URL = process.env.FRONTEND_URL as string
 
 app.use(
   cors({
-    origin: URL || "http://localhost:5173", 
+    origin:[ URL, "http://localhost:5173"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   })

@@ -9,6 +9,7 @@ import {
     ChevronRight,
     ChevronDown,
     ChevronUp,
+    LoaderCircle,
 } from "lucide-react"
 import api from "../services/api"
 
@@ -32,6 +33,11 @@ interface BillData {
 
 export default function CheckoutPage() {
     const [currentView, setCurrentView] = useState<"checkout" | "payment">("checkout")
+    const [finalizing, setFinalizing] = useState<boolean>(false)
+    const [buttonLoading, setButtonLoading] = useState<{
+        productId: string | null,
+        type: 'add' | 'reduce' | null
+    }>({productId: null, type: null})
     const location = useLocation()
     const navigate = useNavigate()
 
@@ -50,6 +56,9 @@ export default function CheckoutPage() {
 
 
     const updateQuantity = async (productId: string, delta: number) => {
+
+        setButtonLoading({productId, type: delta === 1 ? 'add' : 'reduce'})
+
         const updatedItems = cart.items.map(item =>
             item.productId === productId
                 ? { ...item, quantity: Math.max(1, item.quantity + delta) }
@@ -66,6 +75,7 @@ export default function CheckoutPage() {
         })
 
         setCart(res.data.data)
+        setButtonLoading({productId: null, type: null})
     }
 
 
@@ -104,18 +114,21 @@ export default function CheckoutPage() {
 
     const finalizeBill = async () => {
         try {
+            setFinalizing(true)
             const res = await api.post('/bill/finalize', cart)
-            
+
             if (res.data.success) {
                 navigate('/finalBill', {
                     state: {
                         billData: res.data.data
                     }
                 })
+                setFinalizing(false)
             }
 
         } catch (error) {
             console.log(error)
+            setFinalizing(false)
         }
     }
 
@@ -160,15 +173,21 @@ export default function CheckoutPage() {
                                         <button
                                             onClick={() => updateQuantity(item.productId, -1)}
                                             className="bg-[#0f3a4d] text-white rounded-full p-1"
+                                            disabled={buttonLoading.productId === item.productId && buttonLoading.type === 'reduce'}
                                         >
-                                            <Minus className="w-4 h-4" />
+                                            {buttonLoading.productId === item.productId && buttonLoading.type === 'reduce' ?
+                                                (<LoaderCircle className="animate-spin w-4 h-4" />) : (<Minus className="w-4 h-4" />)
+                                            }
                                         </button>
                                         <span className="font-semibold w-6 text-center">{item.quantity}</span>
                                         <button
                                             onClick={() => updateQuantity(item.productId, 1)}
                                             className="bg-[#0f3a4d] text-white rounded-full p-1"
+                                            disabled={buttonLoading.productId === item.productId && buttonLoading.type === 'add'}
                                         >
-                                            <Plus className="w-4 h-4" />
+                                            {buttonLoading.productId === item.productId && buttonLoading.type === 'add' ?
+                                                (<LoaderCircle className="animate-spin w-4 h-4" />) : (<Plus className="w-4 h-4" />)
+                                            }
                                         </button>
 
                                         {item.offerApplied && (
@@ -270,9 +289,12 @@ export default function CheckoutPage() {
                 <div className="bg-white border-t border-gray-200 p-4 md:px-6 md:py-6 sticky bottom-0">
                     <button className="w-full bg-[#0f3a4d] text-white py-4 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-[#0d2d3a]"
                         onClick={finalizeBill}
+                        disabled={finalizing}
                     >
                         <span>Complete</span>
-                        <ChevronRight className="w-5 h-5" />
+                        {finalizing ?
+                            (<LoaderCircle className="animate-spin" />) : (<ChevronRight className="w-5 h-5" />)
+                        }
                     </button>
                 </div>
             </div>

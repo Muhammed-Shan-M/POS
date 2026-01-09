@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Search, ChevronLeft, Trash2, Plus, Minus } from "lucide-react"
+import { Search, ChevronLeft, Trash2, Plus, Minus, LoaderCircle } from "lucide-react"
 import type { IProduct } from "../types/IProduct"
 import api from "../services/api"
 import { useNavigate } from "react-router-dom";
@@ -16,6 +16,7 @@ export default function SelectProducts() {
     const [searchQuery, setSearchQuery] = useState("")
     const [cart, setCart] = useState<CartItem[]>([])
     const [products, setProducts] = useState<IProduct[]>([])
+    const [calculating, setCalculating] = useState<boolean>(false)
 
     const categories = ["Snacks", "Burgers", "Drinks"]
     const navigate = useNavigate();
@@ -60,6 +61,7 @@ export default function SelectProducts() {
 
     const caluculateBilling = async () => {
         try {
+            setCalculating(true)
             const items = cart.map(i => ({ productId: i._id, quantity: i.quantity }))
 
             const res = await api.post('/bill/calculate', { items })
@@ -70,10 +72,12 @@ export default function SelectProducts() {
                         billData: res.data.data
                     }
                 })
+                setCalculating(false)
             }
 
         } catch (error) {
             console.log(error)
+            setCalculating(false)
         }
     }
 
@@ -111,7 +115,7 @@ export default function SelectProducts() {
 
 
             <div className="flex-1 flex flex-col overflow-hidden md:p-6 pb-20 md:pb-6">
-  
+
                 <div className="md:hidden px-4 py-4 border-b border-gray-200 bg-white">
                     <div className="flex gap-3 overflow-x-auto pb-2">
                         {categories.map((category) => (
@@ -142,7 +146,7 @@ export default function SelectProducts() {
                     </div>
                 </div>
 
- 
+
                 <div className="flex-1 overflow-auto px-4 md:px-0">
                     <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {filteredProducts.map((product) => (
@@ -227,10 +231,13 @@ export default function SelectProducts() {
                 {cart.length > 0 && (
                     <button className="w-full bg-[#002d4a] text-white py-3 rounded-lg font-bold text-lg hover:bg-[#00213a] transition-colors flex items-center justify-between px-4"
                         onClick={caluculateBilling}
+                        disabled={calculating}
                     >
                         <span>₹{total.toFixed(2)}</span>
                         <span className="flex items-center gap-2">
-                            Pay <ChevronLeft size={20} className="rotate-180" />
+                            {calculating ?
+                                (<LoaderCircle className="animate-spin"/>) : (<>Pay <ChevronLeft size={20} className="rotate-180" /></>)
+                            }
                         </span>
                     </button>
                 )}
