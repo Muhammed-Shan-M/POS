@@ -138,7 +138,7 @@ export default function CheckoutPage() {
                         {cart.items.map((item) => (
                             <div key={item.productId} className="bg-white rounded-lg p-3 flex gap-3 md:gap-4 border border-gray-200">
 
-                                <div className="w-16 h-16 md:w-20 md:h-20 flex-shrink-0">
+                                <div className="w-16 h-16 md:w-20 md:h-20 shrink-0">
                                     <img
                                         src={item.image || "/placeholder.svg"}
                                         alt={item.name}

@@ -15,7 +15,7 @@ export default function BillPage() {
     const location = useLocation()
     const navigate = useNavigate()
 
-    const [billData, setBillData] = useState<{
+    const [billData] = useState<{
         createdAt: string;
         finalTotal: number;
         items: CartItem[];

@@ -90,7 +90,7 @@ export default function SelectProducts() {
             </div>
 
 
-            <div className="hidden md:flex w-40 bg-white p-4 flex flex-col gap-4 border-r border-gray-200">
+            <div className="md:flex w-40 bg-white p-4 flex flex-col gap-4 border-r border-gray-200">
 
                 <div className="flex flex-col gap-3">
                     {categories.map((category) => (
@@ -118,7 +118,7 @@ export default function SelectProducts() {
                             <button
                                 key={category}
                                 onClick={() => setSelectedCategory(category)}
-                                className={`flex items-center justify-center gap-1 py-2 px-3 rounded-lg transition-colors whitespace-nowrap flex-shrink-0 ${selectedCategory === category ? "bg-[#002d4a] text-white" : "bg-gray-100 text-gray-700"
+                                className={`flex items-center justify-center gap-1 py-2 px-3 rounded-lg transition-colors whitespace-nowrap shrink-0 ${selectedCategory === category ? "bg-[#002d4a] text-white" : "bg-gray-100 text-gray-700"
                                     }`}
                             >
                                 <span className="text-lg">🍽️</span>
@@ -171,7 +171,7 @@ export default function SelectProducts() {
             </div>
 
 
-            <div className="hidden md:flex w-80 bg-white p-6 flex flex-col gap-4 border-l border-gray-200 overflow-auto">
+            <div className="md:flex w-80 bg-white p-6 flex flex-col gap-4 border-l border-gray-200 overflow-auto">
                 <div className="flex items-center justify-between">
                     <h2 className="text-xl font-bold text-gray-800">New Order</h2>
                     {cart.length > 0 && (
